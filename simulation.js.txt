@@ -1,0 +1,53 @@
+const canvas = document.getElementById('simulationCanvas');
+const context = canvas.getContext('2d');
+
+let ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 20,
+    dx: 2,
+    dy: 2,
+    gravity: 1,
+    color: 'blue'
+};
+
+document.getElementById('gravity').addEventListener('input', function(event) {
+    ball.gravity = parseFloat(event.target.value);
+});
+
+function drawBall() {
+    context.beginPath();
+    context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, false);
+    context.fillStyle = ball.color;
+    context.fill();
+    context.closePath();
+}
+
+function updateBallPosition() {
+    ball.dy += ball.gravity * 0.1;
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    // Check for collisions with the canvas boundaries
+    if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+        ball.dx *= -1;
+    }
+    if (ball.y + ball.radius > canvas.height) {
+        ball.y = canvas.height - ball.radius;
+        ball.dy *= -0.8; // bounce effect
+    }
+}
+
+function clearCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function updateSimulation() {
+    clearCanvas();
+    drawBall();
+    updateBallPosition();
+    requestAnimationFrame(updateSimulation);
+}
+
+// Start the simulation
+updateSimulation();
